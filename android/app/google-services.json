@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "615383370368",
+    "firebase_url": "https://my-local-test-firebase-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "my-local-test-firebase",
+    "storage_bucket": "my-local-test-firebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615383370368:android:d194feadd17984fc14f465",
+        "android_client_info": {
+          "package_name": "com.example.fastcam_flutter_beamin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "615383370368-02on3atiqkgaqfgj4uo0bmq8is8ctc77.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3otKMT0Jva5iKrCekIMzXntf_5D66nrg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "615383370368-02on3atiqkgaqfgj4uo0bmq8is8ctc77.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
