@@ -8,6 +8,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  // form의 상태를 관리하는 키
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _pwdController = TextEditingController();
@@ -15,6 +16,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // 키보드가 올라올 때 화면을 덮어도 되게 하는 설정
+      resizeToAvoidBottomInset: false,
       // 노치 등에 가려지지 않는 화면 영역
       body: SafeArea(
         child: Padding(
@@ -22,6 +25,9 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Image(
+                image: AssetImage('assets/Fastcampus.png'),
+              ),
               const Text(
                 '패캠마트',
                 style: TextStyle(
@@ -62,6 +68,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                         return null;
                       },
+                      // 비밀번호 입력 시 보이지 않게 하는 설정
+                      obscureText: true,
+                      keyboardType: TextInputType.visiblePassword,
                     ),
                     const SizedBox(height: 16),
                     Padding(
@@ -84,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextButton(
                         onPressed: () {}, child: const Text('계정이 있나요? 회원가입')),
                     const Divider(),
+                    Image.asset('assets/btn_google_signin.png'),
                   ],
                 ),
               ),
