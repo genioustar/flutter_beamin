@@ -124,6 +124,22 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
           ),
+          GestureDetector(
+            child: Container(
+              height: 72,
+              color: Colors.deepPurple.withOpacity(0.8),
+              child: const Center(
+                child: Text(
+                  '장바구니에 담기',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
