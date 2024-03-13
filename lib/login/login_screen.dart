@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -91,7 +92,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     TextButton(
-                        onPressed: () {}, child: const Text('계정이 있나요? 회원가입')),
+                        onPressed: () => context.push('/sign_up'),
+                        child: const Text('계정이 있나요? 회원가입')),
                     const Divider(),
                     Image.asset('assets/btn_google_signin.png'),
                   ],
