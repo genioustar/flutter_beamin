@@ -69,8 +69,68 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                               icon: const Icon(Icons.more_vert),
                               itemBuilder: (context) {
                                 return [
-                                  const PopupMenuItem(
-                                    child: Text('리뷰등록'),
+                                  PopupMenuItem(
+                                    child: const Text('리뷰등록'),
+                                    onTap: () {
+                                      int reviewScore = 0;
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          TextEditingController
+                                              reviewController =
+                                              TextEditingController();
+                                          return StatefulBuilder(
+                                              builder: (context, setState) {
+                                            return AlertDialog(
+                                              title: const Text('리뷰등록'),
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  TextField(
+                                                    controller:
+                                                        reviewController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      labelText: '리뷰내용',
+                                                    ),
+                                                  ),
+                                                  Row(
+                                                    children: List.generate(
+                                                      5,
+                                                      (index) => IconButton(
+                                                        onPressed: () {
+                                                          setState(() =>
+                                                              reviewScore =
+                                                                  index);
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.star,
+                                                          color: index <=
+                                                                  reviewScore
+                                                              ? Colors.amber
+                                                              : Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('취소'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {},
+                                                  child: const Text('등록'),
+                                                ),
+                                              ],
+                                            );
+                                          });
+                                        },
+                                      );
+                                    },
                                   ),
                                 ];
                               },
@@ -87,7 +147,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                             Spacer(),
-                            Icon(Icons.star),
+                            Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
                             Text('4.5'),
                           ],
                         )

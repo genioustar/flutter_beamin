@@ -1,4 +1,5 @@
 import 'package:fastcam_flutter_beamin/home/cart_screen.dart';
+import 'package:fastcam_flutter_beamin/home/product_add_screen.dart';
 import 'package:fastcam_flutter_beamin/home/widgets/home_widget.dart';
 import 'package:fastcam_flutter_beamin/home/widgets/seller_widget.dart';
 import 'package:flutter/material.dart';
@@ -45,14 +46,20 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const CartScreen(),
+                  builder: (context) => const CartScreen(uid: ''),
                 ),
               );
             },
             child: const Icon(Icons.shopping_cart_outlined),
           ),
         1 => FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ProductAddScreen(),
+                ),
+              );
+            },
             child: const Icon(Icons.add),
           ),
         // TODO: Handle this case.
