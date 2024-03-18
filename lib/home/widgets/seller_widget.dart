@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SellerWidget extends StatefulWidget {
@@ -8,6 +9,12 @@ class SellerWidget extends StatefulWidget {
 }
 
 class _SellerWidgetState extends State<SellerWidget> {
+  Future addCategories(String category) async {
+    await FirebaseFirestore.instance
+        .collection('category')
+        .add({'title': category});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,7 +32,36 @@ class _SellerWidgetState extends State<SellerWidget> {
                 child: const Text('카테고리 일괄 등록'),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  TextEditingController categoryController =
+                      TextEditingController();
+                  showAdaptiveDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      content: TextField(
+                        controller: categoryController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: '카테고리명',
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () async {
+                            if (categoryController.text.isNotEmpty) {
+                              await addCategories(
+                                  categoryController.text.trim());
+                              if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+                            }
+                          },
+                          child: const Text('등록'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
                 child: const Text('카테고리 등록'),
               ),
             ],
