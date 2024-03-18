@@ -6,7 +6,6 @@ import 'package:fastcam_flutter_beamin/home/product_add_screen.dart';
 import 'package:fastcam_flutter_beamin/home/product_detail_screen.dart';
 import 'package:fastcam_flutter_beamin/login/login_screen.dart';
 import 'package:fastcam_flutter_beamin/login/sing_up_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -20,7 +19,7 @@ void main() async {
   );
 
   if (kDebugMode) {
-    await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    // await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
     FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
     FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
   }

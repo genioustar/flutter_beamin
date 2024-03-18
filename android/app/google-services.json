@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "615383370368-25sq2i2dkqlq94vr415ru6953sc72vi3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fastcam_flutter_beamin",
+            "certificate_hash": "1ca97ae055900b4ff3994749e9b0a593bfeda1e4"
+          }
+        },
+        {
           "client_id": "615383370368-02on3atiqkgaqfgj4uo0bmq8is8ctc77.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +38,13 @@
             {
               "client_id": "615383370368-02on3atiqkgaqfgj4uo0bmq8is8ctc77.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "615383370368-g1g2092qg8icdho81f2g5nlpr9905hvu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.fastcamFlutterBeamin"
+              }
             }
           ]
         }

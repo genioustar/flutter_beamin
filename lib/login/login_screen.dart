@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,6 +15,50 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _pwdController = TextEditingController();
+
+  Future<UserCredential?> signIn(
+      {required String email, required String password}) async {
+    try {
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  // Future<UserCredential?> signInWithGoogle() async {
+  //   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+  //   final GoogleSignInAuthentication? googleAuth =
+  //       await googleUser?.authentication;
+
+  //   final googleAuthCredential = GoogleAuthProvider.credential(
+  //     accessToken: googleAuth?.accessToken,
+  //     idToken: googleAuth?.idToken,
+  //   );
+  //   return FirebaseAuth.instance.signInWithCredential(googleAuthCredential);
+  // }
+  Future<UserCredential?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if (googleUser == null) {
+      return null;
+    }
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+    final OAuthCredential googleAuthCredential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    return await FirebaseAuth.instance
+        .signInWithCredential(googleAuthCredential);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +123,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            signIn(
+                              email: _emailController.text.trim(),
+                              password: _pwdController.text.trim(),
+                            ).then(
+                              (userCredential) {
+                                if (userCredential != null) {
+                                  context.go('/');
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('로그인에 실패했습니다.'),
+                                    ),
+                                  );
+                                }
+                              },
+                            );
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 48),
                           backgroundColor: Colors.red,
@@ -95,7 +161,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () => context.push('/sign_up'),
                         child: const Text('계정이 있나요? 회원가입')),
                     const Divider(),
-                    Image.asset('assets/btn_google_signin.png'),
+                    GestureDetector(
+                      onTap: () async {
+                        final userCredit = await signInWithGoogle();
+                        if (userCredit == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('로그인에 실패했습니다.'),
+                            ),
+                          );
+                        } else {
+                          if (context.mounted) {
+                            context.go('/');
+                          }
+                        }
+                      },
+                      child: Image.asset('assets/btn_google_signin.png'),
+                    ),
                   ],
                 ),
               ),
