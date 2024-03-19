@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fastcam_flutter_beamin/model/product.dart';
 import 'package:flutter/material.dart';
 
 class SellerWidget extends StatefulWidget {
@@ -9,11 +10,7 @@ class SellerWidget extends StatefulWidget {
 }
 
 class _SellerWidgetState extends State<SellerWidget> {
-  Future addCategories(String category) async {
-    await FirebaseFirestore.instance
-        .collection('category')
-        .add({'title': category});
-  }
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +20,14 @@ class _SellerWidgetState extends State<SellerWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SearchBar(),
+          SearchBar(
+            controller: searchController,
+            leading: const Icon(Icons.search),
+            onChanged: (value) {
+              setState(() {});
+            },
+            hintText: '상품명을 입력하세요',
+          ),
           const SizedBox(height: 16),
           ButtonBar(
             children: [
@@ -77,56 +81,97 @@ class _SellerWidgetState extends State<SellerWidget> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                return Container(
-                  height: 120,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 120,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+            child: StreamBuilder(
+              stream: streamProducts(searchController.text.trim()),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final items = snapshot.data!.docs
+                      .map((e) =>
+                          Product.fromJson(e.data() as Map<String, dynamic>)
+                              .copyWith(docId: e.id))
+                      .toList();
+                  return ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      return GestureDetector(
+                        onTap: () {
+                          print(item.docId);
+                        },
+                        child: Container(
+                          height: 120,
+                          margin: const EdgeInsets.only(bottom: 16),
+                          child: Row(
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    '제품명',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                              Container(
+                                width: 120,
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  borderRadius: BorderRadius.circular(8),
+                                  image: DecorationImage(
+                                    image: NetworkImage(item.imageUrl ??
+                                        'https://fastly.picsum.photos/id/307/200/300.jpg?hmac=35wY422fzycUwe-jX9k1JwdWurkBiowwCBswfyVXY4E'),
+                                    fit: BoxFit.cover,
                                   ),
-                                  PopupMenuButton(
-                                    icon: const Icon(Icons.more_vert),
-                                    itemBuilder: (context) => [
-                                      const PopupMenuItem(
-                                          value: 'edit', child: Text('리뷰')),
-                                      const PopupMenuItem(
-                                          value: 'delete', child: Text('삭제')),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            item.title ?? '제품명',
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          PopupMenuButton(
+                                            icon: const Icon(Icons.more_vert),
+                                            itemBuilder: (context) => [
+                                              const PopupMenuItem(
+                                                  value: 'edit',
+                                                  child: Text('리뷰')),
+                                              PopupMenuItem(
+                                                value: 'delete',
+                                                child: const Text('삭제'),
+                                                onTap: () {
+                                                  FirebaseFirestore.instance
+                                                      .collection('product')
+                                                      .doc(item.docId)
+                                                      .delete();
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Text('${item.price} 원'),
+                                      Text(switch (item.isDiscount) {
+                                        true => '${item.discountRate}% 할인',
+                                        false => '할인 없음',
+                                        null => '할인 정보 없음',
+                                      }),
+                                      const Text('재고수량'),
                                     ],
                                   ),
-                                ],
+                                ),
                               ),
-                              const Text('1000000'),
-                              const Text('할인 중'),
-                              const Text('재고수량'),
                             ],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      );
+                    },
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(),
                 );
               },
             ),
@@ -134,5 +179,30 @@ class _SellerWidgetState extends State<SellerWidget> {
         ],
       ),
     );
+  }
+
+  Future addCategories(String category) async {
+    await FirebaseFirestore.instance
+        .collection('category')
+        .add({'title': category});
+  }
+
+  Future<List<Product>> getProducts() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('product')
+        .orderBy('createdAt', descending: true)
+        .get();
+    return snapshot.docs
+        .map((doc) => Product.fromJson(doc.data()..['docId'] = doc.id))
+        .toList();
+  }
+
+  Stream<QuerySnapshot> streamProducts(String query) {
+    return query.isNotEmpty
+        ? FirebaseFirestore.instance
+            .collection('product')
+            .orderBy('title')
+            .startAt([query]).endAt(['$query\uf8ff']).snapshots()
+        : FirebaseFirestore.instance.collection('product').snapshots();
   }
 }
