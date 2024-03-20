@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fastcam_flutter_beamin/home/widgets/camera_widget.dart';
 import 'package:fastcam_flutter_beamin/model/category.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,18 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.add),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return const Camera();
+                  },
+                ),
+              );
+            },
+            icon: const Icon(Icons.camera_alt),
           ),
         ],
       ),

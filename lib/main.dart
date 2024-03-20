@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fastcam_flutter_beamin/firebase_options.dart';
 import 'package:fastcam_flutter_beamin/home/cart_screen.dart';
@@ -13,11 +14,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+List<CameraDescription> cameras = [];
 void main() async {
+  // firebase의 Auth를 사용하기 위해 초기화하는 코드
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // camera 갯수 확인
+  cameras = await availableCameras();
 
   if (kDebugMode) {
     await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
