@@ -1,4 +1,10 @@
+import 'dart:typed_data';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fastcam_flutter_beamin/model/category.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProductAddScreen extends StatefulWidget {
   const ProductAddScreen({super.key});
@@ -11,6 +17,13 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool isSale = false;
+
+  final db = FirebaseFirestore.instance;
+  final storage = FirebaseStorage.instance;
+  Uint8List? imageData;
+  XFile? imageFile;
+
+  Category? selectedCategory;
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -40,31 +53,45 @@ class _ProductAddScreenState extends State<ProductAddScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Align(
-                alignment: Alignment.topCenter,
-                child: Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      height: 240,
-                      width: 240,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Colors.grey[300]!,
-                          width: 1,
+              GestureDetector(
+                onTap: () async {
+                  final ImagePicker picker = ImagePicker();
+                  imageFile =
+                      await picker.pickImage(source: ImageSource.gallery);
+                  imageData = await imageFile?.readAsBytes();
+                  setState(() {});
+                },
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: imageData == null
+                      ? Column(
+                          children: [
+                            Container(
+                              alignment: Alignment.center,
+                              height: 240,
+                              width: 240,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.grey[300]!,
+                                  width: 1,
+                                ),
+                              ),
+                              child: const Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add),
+                                  Text('이미지를 선택해주세요'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        )
+                      : Image.memory(
+                          imageData!,
+                          fit: BoxFit.cover,
                         ),
-                      ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add),
-                          Text('상품 이미지 추가'),
-                        ],
-                      ),
-                    ),
-                  ],
                 ),
               ),
               Padding(
